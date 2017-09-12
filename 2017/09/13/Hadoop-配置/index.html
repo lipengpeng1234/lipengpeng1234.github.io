@@ -10,7 +10,7 @@
     
     
     
-    <title>Hadoop 配置 | Hexo</title>
+    <title>Hexo</title>
     <!-- inject:style -->
     <link href="/css/style.css" rel="stylesheet" type="text/css">
     <!-- endinject -->
@@ -161,7 +161,7 @@
     <div class="cube-content">
         <div class="cube-left">
             <div class="cube-article">
-    <h1 class="title">Hadoop 配置</h1>
+    <h1 class="title"></h1>
     
     <div class="cube-article-header">
         <div class="cube-article-date">
@@ -177,7 +177,45 @@
     
     <div class="cube-article-content cube-markdown">
         
-        
+        <h1 id="Hadoop相关配置"><a href="#Hadoop相关配置" class="headerlink" title="Hadoop相关配置"></a>Hadoop相关配置</h1><p>@(hadoop)[hdfs|yarn|namenode]</p>
+<p><strong>配置环境</strong>：系统用的是ubuntu15.04 Hadoop2.7.3</p>
+<p>　　虚拟机 master-hadoop ip:192.168.116.129</p>
+<p>　　虚拟机 slave1-hadoop ip:192.168.116.130</p>
+<p>　　虚拟机 slave2-hadoop ip:192.168.116.131</p>
+<ul>
+<li><p><strong>Hadoop 集群的安装配置大致为如下流程</strong> ：1.新建一台虚拟机作为 Master<br>2.在 Master 节点上配置安装 SSH server、安装 Java 环境<br>3.在 Master 节点上安装 Hadoop，并完成配置,为虚拟机建立快照（可选）<br>4.然后在克隆出另外两个虚拟机，修改一些配置<br>5.在 Master 节点上开启 Hadoop</p>
+</li>
+<li><p><strong>1 新建虚拟机进行网路配置</strong> ：因为我新建完虚拟机，网络就配置好了，用的是nat模式,ip为192.168.116.129 能上网，修改主机的名字为 master-hadoop</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gedit /etc/hostname</div></pre></td></tr></table></figure>
+<p>   <strong>修改hosts文件</strong><br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">   </div><div class="line">    sudo gedit /etc/hosts</div><div class="line">  ``` </div><div class="line"> </div><div class="line">  **安装ssh，安装之前将 源改为中国的，**</div><div class="line">    ``` </div><div class="line">   </div><div class="line">        sudo apt-get install openssh-server</div><div class="line"></div><div class="line">         sudo apt-get install openssh-client</div><div class="line">  ``` </div><div class="line">   然后 ssh localhost 看看能不能连上，</div><div class="line">**配置ssh无密码登录节点**</div></pre></td></tr></table></figure></p>
+<p>cd ~/.ssh               # 如果没有该目录，先执行一次ssh localhost<br>rm ./id_rsa*            # 删除之前生成的公匙（如果有）<br>ssh-keygen -t rsa<br>cat ./id_rsa.pub &gt;&gt; ./authorized_keys<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">然后 ssh localhost 这次不用输密码即可登录（记得exit）安装之前的配置已经完成，下面安装hadoop</div><div class="line"></div><div class="line">**配置path变量**</div></pre></td></tr></table></figure></p>
+<p>sudo gedit /etc/profile</p>
+<p>//在末尾写上 注意hadoop地址<br>HADOOP_HOME=/usr/local/hadoop<br>PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin<br>export HADOOP_HOME PATH<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">**关闭防火墙**</div><div class="line"></div><div class="line"> ```    </div><div class="line">                sudo ufw disable</div></pre></td></tr></table></figure></p>
+<p> <strong>修改 /usr/local/hadoop/etc/hadoop 中的5个配置文件</strong></p>
+<ol>
+<li>slaves<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">slave1-hadoop</div><div class="line">slave2-hadoop</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li>core-site.xml<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;fs.defaultFS&lt;/name&gt;</div><div class="line">&lt;value&gt;hdfs://master-hadoop:9000&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;io.file.buffer.size&lt;/name&gt;</div><div class="line">&lt;value&gt;131072&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</div><div class="line">&lt;value&gt;file:/usr/local/hadoop/tmp&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>3.hdfs-site.xml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;heartbeat.recheckinterval&lt;/name&gt;</div><div class="line">&lt;value&gt;10&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;</div><div class="line">&lt;value&gt;file:/usr/local/hadoop/dfs/name&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;</div><div class="line">&lt;value&gt;file:/usr/local/hadoop/dfs/data&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;dfs.replication&lt;/name&gt;</div><div class="line">&lt;value&gt;2&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure></p>
+<p>4.mapred-site.xml （可能需要先重命名，默认文件名为 mapred-site.xml.template）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;mapreduce.framework.name&lt;/name&gt;</div><div class="line">&lt;value&gt;yarn&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:10020&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:19888&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure></p>
+<p>5.yarn-site.xml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line"></div><div class="line">&lt;!-- Site specific YARN configuration properties --&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;yarn.resourcemanager.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:8032&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;yarn.resourcemanager.scheduler.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:8030&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:8031&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;yarn.resourcemanager.admin.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:8033&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;yarn.resourcemanager.webapp.address&lt;/name&gt;</div><div class="line">&lt;value&gt;master-hadoop:8088&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</div><div class="line">&lt;value&gt;mapreduce_shuffle&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;property&gt;</div><div class="line">   &lt;name&gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&lt;/name&gt;</div><div class="line">   &lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure></p>
+<p>至此，hadoop的环境在一台虚拟机上就配置好了</p>
+<p>　　然后把这台虚拟机克隆两份，配置slave1-hadoop和slave2-hadoop的ip和hostname</p>
+<p>　　然后环境就搭建好了</p>
+<p>　测试：</p>
+<p>　　ssh无密码连接，都不用输入密码，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ssh localhost </div><div class="line">ssh slave1-hadoop</div><div class="line">ssh slave2-hadoop</div></pre></td></tr></table></figure></p>
+<p>接下来就是启动hadoop 验证配置了，在master-hadoop上运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hdfs namenode -format       # 首次运行需要执行初始化，之后不需要</div></pre></td></tr></table></figure></p>
+<p><strong>启动hadoop</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">start-dfs.sh</div><div class="line">start-yarn.sh</div><div class="line">mr-jobhistory-daemon.sh start historyserver</div></pre></td></tr></table></figure></p>
+<p>通过命令 jps 可以查看各个节点所启动的进程。正确的话，在 Master 节点上可以看到 NameNode、ResourceManager、SecondrryNameNode、JobHistoryServer 进程</p>
+<p>在 Slave 节点可以看到 DataNode 和 NodeManager 进程</p>
+<p>缺少任一进程都表示出错</p>
+
     </div>
 </div>
 
@@ -269,7 +307,7 @@
                     <span>1</span>
                 </p>
                 <p class="title">
-                    <a href="/2017/09/13/Hadoop-配置/" title="Hadoop 配置">Hadoop 配置</a>
+                    <a href="/2017/09/13/Hadoop-配置/" title=""></a>
                 </p>
             </div>
             
