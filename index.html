@@ -152,7 +152,7 @@
             window.headerModule = {}
             window.headerModule.image = {
                 width: '2000',
-                height: '1414'
+                height: '600'
             }
 
         })(window)
@@ -161,6 +161,73 @@
     <div class="cube-content">
         <div class="cube-left">
             
+<div class="cube-excerpt" id="cube-excerpt-关于hbase的应用">
+    <header class="cube-excerpt-header">
+        <h1><a href="/2017/09/13/关于hbase的应用/">关于hbase的应用</a></h1>
+        <div class="cube-excerpt-header-msg">
+            <div class="cube-excerpt-date">
+                <i class="cube-icon cube-icon-date" aria-hidden="true"></i>
+                2017-09-13
+            </div>
+            <div class="cube-excerpt-tags">
+                <i class="cube-icon cube-icon-tag" aria-hidden="true"></i>
+                
+            </div>
+        </div>
+    </header>
+    <article class="cube-excerpt-entry cube-markdown">
+        
+        
+           <p>##关于hbase的应用##<br>hbase是一个开源的非关系的可伸缩的分布式数据库，他是面向列的，并适合于存储超大型松散数据，Hbase实用于实时，随机对Big数据进行读写操作的业务环境，下来主要我在做关于民航可视化及其预测方面的一些问题</p>
+<p><strong>Hbase配置</strong><br>前提是要安装完hadoop，默认一般是在namenode上进行<br><em>1.修改conf/hbase-env.sh,添加关于jdk的支持</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">export JAVA_HOME=/usr/linux/jdk</div><div class="line">export HBASE_MANAGES_ZK=true </div><div class="line">export HBASE_LOG_DIR=/data/logs/hbase</div></pre></td></tr></table></figure></p>
+<p><em>2.修改conf/hbase-site.xml</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&lt;property&gt; </div><div class="line">&lt;name&gt;hbase.rootdir&lt;/name&gt; </div><div class="line">&lt;value&gt;hdfs://master:9000/hbase&lt;/value&gt; </div><div class="line">&lt;/property&gt; </div><div class="line">&lt;property&gt; </div><div class="line">&lt;name&gt;hbase.cluster.distributed&lt;/name&gt; </div><div class="line">&lt;value&gt;true&lt;/value&gt; </div><div class="line">&lt;/property&gt; </div><div class="line">&lt;property&gt; </div><div class="line">&lt;name&gt;hbase.master&lt;/name&gt; </div><div class="line">&lt;value&gt;hdfs://master:60000&lt;/value&gt; </div><div class="line">&lt;/property&gt; </div><div class="line"></div><div class="line">&lt;property&gt; </div><div class="line">&lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt; </div><div class="line">&lt;value&gt;slave-001,slave-002,slave-003&lt;/value&gt; </div><div class="line">&lt;description&gt;Comma separated list of servers in the ZooKeeper Quorum. For example, &quot;host1.mydomain.com,host2.mydomain.com,host3.mydomain.com&quot;. By default this is set to localhost for local and pseudo-distributed modes of operation. For a fully-distributed setup, this should be set to a full list of ZooKeeper quorum servers. If HBASE_MANAGES_ZK is set in hbase-env.sh this is the list of servers which we will start/stop ZooKeeper on. &lt;/description&gt; </div><div class="line">&lt;/property&gt; </div><div class="line">&lt;property&gt; </div><div class="line">&lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt; </div><div class="line">&lt;value&gt;/data/work/zookeeper&lt;/value&gt; </div><div class="line">&lt;description&gt;Property from ZooKeeper&apos;s config zoo.cfg. The directory where the snapshot is stored. &lt;/description&gt; </div><div class="line">&lt;/property&gt;</div></pre></td></tr></table></figure></p>
+<p><em>3.修改hadoop的目录下的conf/hdfs-site.xml</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;property&gt; </div><div class="line">&lt;name&gt;dfs.datanode.max.xcievers&lt;/name&gt; </div><div class="line">&lt;value&gt;4096&lt;/value&gt; </div><div class="line">&lt;/property&gt;</div></pre></td></tr></table></figure></p>
+<p><em>4.修改conf/regionservers 将所有的datanode添加到这个文件，类似与hadoop中slaves文件</em> </p>
+<p><em>5.拷贝hbase到所有的节点</em><br><em>6. 启动hbase</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ ./bin/start-hbase.sh</div><div class="line">``` </div><div class="line">*7.如果直接在etc/profile文件里写入hbase的环*</div><div class="line">*境，直接从任何地方都可进入*</div><div class="line">*8.进入hbase*</div></pre></td></tr></table></figure>
+<p>hbase shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">**mysql数据和hbase的互倒问题**</div><div class="line">*1.将mysql数据导入hbase*</div><div class="line">在将mysql数据导入hbase的过程中，首先表中必须要有id，让其作为hbase数据的键值，其余作为列族</div><div class="line">比如建一个表</div></pre></td></tr></table></figure></p>
+<p>create ‘test’,’cf’<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">在导入的过程中首先装一个sqoop，将mysql连接包导入和base的lib文件下</div></pre></td></tr></table></figure></p>
+<p>sqoop import –connect jdbc:mysql://localhost:3306/result –table researchers –hbase-table test –column-family person –hbase-row-key id –hbase-create-table –username ‘root’ -P<br>```<br>上面的result为mysql数据库的名，resrarchers为表名，test为新建hbase的数据库名，关于hbase的一些具体操作可去官网查看</p>
+
+        
+    </article>
+    <footer class="cube-excerpt-footer">
+        <a class="cube-excerpt-more" href="/2017/09/13/关于hbase的应用/">Read More</a>
+    </footer>
+</div>
+
+<div class="cube-excerpt" id="cube-excerpt-双系统问题">
+    <header class="cube-excerpt-header">
+        <h1><a href="/2017/09/13/双系统问题/">双系统问题</a></h1>
+        <div class="cube-excerpt-header-msg">
+            <div class="cube-excerpt-date">
+                <i class="cube-icon cube-icon-date" aria-hidden="true"></i>
+                2017-09-13
+            </div>
+            <div class="cube-excerpt-tags">
+                <i class="cube-icon cube-icon-tag" aria-hidden="true"></i>
+                
+            </div>
+        </div>
+    </header>
+    <article class="cube-excerpt-entry cube-markdown">
+        
+        
+           <h2 id="双系统安装问题"><a href="#双系统安装问题" class="headerlink" title="双系统安装问题"></a>双系统安装问题</h2><p><strong>1.先linux后windows（不建议）</strong><br>一般情况下先装windows后装linux没有什么问题，linux引导系统都会友好的添加windows启动记录，先装linux后装windows则很多人都说不行, windows会用自己地引导记录覆盖已有的linux， 难道windows不能像linux一样保留其他系统地引导记录吗?!<br>最近由于想要清理win8里的垃圾文件，但是有点乱，于是就把win8重装为win10，但是装完之后发现以前D盘里的linux系统进不去了，一直有问题，想尽了各种办法，就是解决不了，用了BCD等等软件进行操作，都没有解决，最后只要又重装了linux系统，但是装完linux系统，又发现win10系统进不去了，最后在开机时长按F12才勉强进入win10系统。<br> 我觉得在装双系统时，安装之前备份mba主引导记录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo dd if=/dev/sda of=backup.mbr bs=512 count=1</div></pre></td></tr></table></figure></p>
+<p> sudo就是说以root(管理员地权限)运行后面地指令， dd命令是一个强大地磁盘操作工具， if 指输入，此处是你地启动硬盘(sda是我的第一个硬盘，第二个硬盘是sdb, sda上有若干分区sda1,sda2…）， of指输出， 要放一个你找的到的地方;bs是指block size 512个byte, count=1指备份一个block.  为什么只一个， 因为这个512里面放的就是我们地关键引导记录, 就是电脑启动后默认去这里找引导指令.<br> 2.跟正常安装windows一样安装windows系统， 光盘/u盘等都可以, 但是要注意一定要选对安装的磁盘分区， 不要把linux分区给覆盖了， 也不要把自己其他有用的资料覆盖了，我就不小心删掉一个有用地分区，还好用gparted找回来了.</p>
+<p>3.安装windows后，正常情况下应该只能进windows, 这时需要用linux启动盘（光盘/U盘）启动系统， 恢复主引导区， 也就是刚刚备份地那个mbr档案, 在windows/dos下应该也有类似地工具. linux下很简单， 还是刚刚地dd指令,只是反过来写输入输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo dd if=backup.mbr of=/dev/sda bs=512 count=1</div></pre></td></tr></table></figure></p>
+<p>4.续步骤3执行完上面地指令后，再让linux自己更新一下Grub 引导记录， 以添加windows引导记录.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo update-grub</div></pre></td></tr></table></figure></p>
+<p>如果你对grub够熟悉， 也可以自己手工修改 grub loader的配置文件,  调整引导顺序什么的都可以透过修改grub引导配置文件完成.</p>
+<p>执行完后用本机硬盘正常重启就可以看到期待的grub引导清单，最下面多一个windows引导地记录, 确认都可以正常启动后就大功告成了.</p>
+<p><strong>2.先windows后linux</strong><br>先windows后linux 只需清理出一个新的空间，在装linux时，系统自动会寻找那个空间</p>
+
+        
+    </article>
+    <footer class="cube-excerpt-footer">
+        <a class="cube-excerpt-more" href="/2017/09/13/双系统问题/">Read More</a>
+    </footer>
+</div>
+
 <div class="cube-excerpt" id="cube-excerpt-">
     <header class="cube-excerpt-header">
         <h1><a href="/2017/09/13/Hadoop-配置/"></a></h1>
@@ -287,7 +354,7 @@
     
     
     <div class="count">
-        <a class="count articles"><span>1</span>Article</a>
+        <a class="count articles"><span>3</span>Article</a>
         <a class="count tags"><span>0</span>Tags</a>
         <a class="count categories"><span>0</span>Categories</a>
     </div>
@@ -301,7 +368,7 @@
 <script>
     (function (window) {
         window.musicModule = {}
-        window.musicModule.musicConfig = '{"narrow":false,"autoplay":false,"showlrc":3,"theme":"#b7daff","mutex":true,"mode":"circulation","preload":"auto","listmaxheight":"513px","music":[{"title":"Dear friends","author":"TRIPLANE","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/TRIPLANE - Dear friends.mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/Dear friends - TRIPLANE.lrc","pic":"http://cube-1252774894.cosgz.myqcloud.com/music/image/TRIPLANE - Dear friends.jpg"},{"title":"Butter-Fly","author":"和田光司","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/和田光司 - Butter-Fly (ピアノヴァージョン).mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/Butter-Fly (ピアノヴァージョン) - 和田光司.lrc","pic":"http://cube-1252774894.cosgz.myqcloud.com/music/image/和田光司 - Butter-Fly (ピアノヴァージョン).jpg"},{"title":"宵闇花火","author":"葉月ゆら","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/葉月ゆら - 宵闇花火.mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/宵闇花火 - 葉月ゆら.lrc","pic":"http://cube-1252774894.cosgz.myqcloud.com/music/image/葉月ゆら - 宵闇花火.jpg"}]}'
+        window.musicModule.musicConfig = '{"narrow":false,"autoplay":false,"showlrc":3,"theme":"#b7daff","mutex":true,"mode":"circulation","preload":"auto","listmaxheight":"513px","music":[{"title":"稻香","author":"周杰伦","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/TRIPLANE - Dear friends.mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/Dear friends - TRIPLANE.lrc","pic":"http://imgcache.qq.com/music/photo/singer_300/58/300_singerpic_4558_0.jpg"},{"title":"梦回唐朝","author":"唐朝乐队","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/和田光司 - Butter-Fly (ピアノヴァージョン).mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/Butter-Fly (ピアノヴァージョン) - 和田光司.lrc","pic":"http://pic.baike.soso.com/ugc/baikepic2/39797/cut-20170308174133-1769093644.jpg/300"},{"title":"月半小夜曲","author":"李克勤","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/葉月ゆら - 宵闇花火.mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/宵闇花火 - 葉月ゆら.lrc","pic":"http://pic.baike.soso.com/ugc/baikepic2/54828/cov-20170202105042-668553626.jpg/300"}]}'
         window.musicModule.lrcConfig = {
             open: 'Open Lyrics',
             close: 'Close Lyrics'
@@ -326,10 +393,36 @@
                     <span>1</span>
                 </p>
                 <p class="title">
-                    <a href="/2017/09/13/Hadoop-配置/" title=""></a>
+                    <a href="/2017/09/13/关于hbase的应用/" title="关于hbase的应用">关于hbase的应用</a>
                 </p>
             </div>
             
+        </li>
+        
+        
+        
+        <li>
+            <div class="normal">
+                <p class="index">
+                    <span>2</span>
+                </p>
+                <p class="title">
+                    <a href="/2017/09/13/双系统问题/" title="双系统问题">双系统问题</a>
+                </p>
+            </div>
+        </li>
+        
+        
+        
+        <li>
+            <div class="normal">
+                <p class="index">
+                    <span>3</span>
+                </p>
+                <p class="title">
+                    <a href="/2017/09/13/Hadoop-配置/" title=""></a>
+                </p>
+            </div>
         </li>
         
         
